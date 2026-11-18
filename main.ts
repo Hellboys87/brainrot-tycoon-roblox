@@ -1,4 +1,7 @@
-// A working roblox-brainrot-01 entry (Node 22, standard library only): the game is this directory's Rojo
+// Brainrot Base Tycoon — a 3D Roblox brainrot tycoon (catch wild Brainrots in the plaza, carry them
+// home to earning pads, lock your base against thieves, dodge the Tsunami Wave, rebirth for x2).
+// This hand-in program is the roblox-brainrot-01 entry for that game (Node 22, standard library only):
+// the game is this directory's Rojo
 // project, built into game.rbxl with `rojo build default.project.json --output game.rbxl`, and the program
 // hands it in. It copies game.rbxl, src/, screenshots/ and PLAY.json from beside this file to /output and
 // writes /output/dossier.json, the summary the judge reads, with the vendored make.fun library. A starting
@@ -13,13 +16,18 @@
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { copyFileSync, cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-roblox.ts';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+
+// Brainrot Base Tycoon hands in the place named by PLAY.json: read it first and say which published
+// place this dossier belongs to (ids are 0 until the human publishes the built game.rbxl on Roblox).
+const play = JSON.parse(readFileSync(join(here, 'PLAY.json'), 'utf8')) as { url?: string; place_id?: number };
+console.log(`Brainrot Base Tycoon: handing in place ${play.place_id ?? 0} (${play.url ?? 'unpublished'}) to ${out}`);
 
 /** cpSync's filter: leave out every file and directory whose name starts with a dot (.gitkeep, .DS_Store, .git). */
 const notDotted = (path: string): boolean => !basename(path).startsWith('.');
